@@ -1,0 +1,1 @@
+return $input.all().map(item => ({...item.json, status: "พัสดุถึงศูนย์คัดแยก", warehouseAt: new Date().toISOString()}))

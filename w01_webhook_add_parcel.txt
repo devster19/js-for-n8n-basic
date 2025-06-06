@@ -1,0 +1,9 @@
+curl --location '{{your-n8n-url}}/webhook-test/parcel-receive' \
+--header 'Content-Type: application/json' \
+--data '{
+    "trackingId": "TX001",
+    "senderName": "สมหญิง",
+    "receiverName": "คุณบี",
+    "receiverAddress": "123 หมู่ 4 อ.เมือง จ.เชียงใหม่ 50200",
+    "pickupRider": "วิน"
+}'
