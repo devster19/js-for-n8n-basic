@@ -1,0 +1,716 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -5540,
+        -1420
+      ],
+      "id": "87470c5a-d83e-4fd0-a624-3d645f2aa16c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nreturn $input.all().map(item => ({...item.json, status: \"พัสดุถึงศูนย์คัดแยก\", warehouseAt: new Date().toISOString()}))"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4940,
+        -1420
+      ],
+      "id": "d1e4c36c-c859-480b-8d73-21ad80ab84bb",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc",
+          "mode": "list",
+          "cachedResultName": "rider_express",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -5280,
+        -1420
+      ],
+      "id": "acf66c11-4110-43ca-8586-13bfa93d08b6",
+      "name": "read all parcels",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pbyM5qkqErXWRnHb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5580,
+        -1140
+      ],
+      "id": "d2eb8058-60b7-4f9c-84d9-f1fd262c6daf",
+      "name": "Wait for sorting 5s",
+      "webhookId": "d8ddc0d3-e8e6-47bb-8e67-6777f657a5b2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const address = item.json.receiverAddress || \"\";\n  const zipcodeMatch = address.match(/\\b(\\d{5})\\b/);\n  const zipcode = zipcodeMatch ? zipcodeMatch[1] : \"\";\n  let zone = \"ไม่ระบุ\";\n  let deliveryRider = \"ไม่ระบุ\";\n  if (/^10|11/.test(zipcode)) {\n    zone = \"กรุงเทพ\";\n    deliveryRider = \"วิน\";\n  } else if (/^12|13/.test(zipcode)) {\n    zone = \"ปริมณฑล\";\n    deliveryRider = \"ไทด์\";\n  } else if (/^5/.test(zipcode)) {\n    zone = \"ภาคเหนือ\";\n    deliveryRider = \"พีท\";\n  } else if (/^9/.test(zipcode)) {\n    zone = \"ภาคใต้\";\n    deliveryRider = \"ภูผา\";\n  } else if (/^4/.test(zipcode)) {\n    zone = \"อีสาน\";\n    deliveryRider = \"ภูวินทร์\";\n  } else if (/^2/.test(zipcode)) {\n    zone = \"ตะวันออก\";\n    deliveryRider = \"ทัพพ์\";\n  } else if (/^7/.test(zipcode)) {\n    zone = \"ตะวันตก\";\n    deliveryRider = \"นที\";\n  }\n  return {\n    json: {\n      ...item.json,\n      'zone': zone,\n      'deliverRider': deliveryRider,\n      'status': \"ทำการเตรียมจัดส่ง\",\n      'sortedAt': new Date().toISOString()\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5300,
+        -1140
+      ],
+      "id": "eba76343-26cd-4c01-9002-f57a87d04e49",
+      "name": "sort and assign to rider"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc",
+          "mode": "list",
+          "cachedResultName": "rider_express",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YvW9CJYcY_2qX6UEZjj0-rlhjWGqgYOd-ZdvRAKPwVc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "trackingId": "={{ $json.trackingId }}",
+            "senderName": "={{ $json.senderName }}",
+            "receiverName": "={{ $json.receiverName }}",
+            "status": "={{ $json.status }}",
+            "pickupRider": "={{ $json.pickupRider }}",
+            "receiverAddress": "={{ $json.receiverAddress }}",
+            "warehouseAt": "={{ $json.warehouseAt }}"
+          },
+          "matchingColumns": [
+            "trackingId"
+          ],
+          "schema": [
+            {
+              "id": "trackingId",
+              "displayName": "trackingId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverName",
+              "displayName": "receiverName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverAddress",
+              "displayName": "receiverAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pickupRider",
+              "displayName": "pickupRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zone",
+              "displayName": "zone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "deliveryRider",
+              "displayName": "deliveryRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "warehouseAt",
+              "displayName": "warehouseAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sortedAt",
+              "displayName": "sortedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dispatchedAt",
+              "displayName": "dispatchedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4660,
+        -1420
+      ],
+      "id": "5a745395-d874-4a1b-9af0-072e74e413cf",
+      "name": "update parcels arrived warehouse",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pbyM5qkqErXWRnHb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc",
+          "mode": "list",
+          "cachedResultName": "rider_express",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YvW9CJYcY_2qX6UEZjj0-rlhjWGqgYOd-ZdvRAKPwVc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "trackingId": "={{ $json.trackingId }}",
+            "senderName": "={{ $json.senderName }}",
+            "receiverName": "={{ $json.receiverName }}",
+            "status": "={{ $json.status }}",
+            "pickupRider": "={{ $json.pickupRider }}",
+            "receiverAddress": "={{ $json.receiverAddress }}",
+            "warehouseAt": "={{ $json.warehouseAt }}",
+            "deliveryRider": "={{ $json.deliverRider }}",
+            "zone": "={{ $json.zone }}",
+            "sortedAt": "={{ $json.sortedAt }}"
+          },
+          "matchingColumns": [
+            "trackingId"
+          ],
+          "schema": [
+            {
+              "id": "trackingId",
+              "displayName": "trackingId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverName",
+              "displayName": "receiverName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverAddress",
+              "displayName": "receiverAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pickupRider",
+              "displayName": "pickupRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zone",
+              "displayName": "zone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "deliveryRider",
+              "displayName": "deliveryRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "warehouseAt",
+              "displayName": "warehouseAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sortedAt",
+              "displayName": "sortedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dispatchedAt",
+              "displayName": "dispatchedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -5060,
+        -1140
+      ],
+      "id": "d8915c83-9ad4-4b68-9415-e94cd55dac04",
+      "name": "update parcels sorted and assigned for delivery",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pbyM5qkqErXWRnHb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  return {\n    json: {\n      ...item.json,\n      'status': \"เจ้าหน้าที่กำลังนำส่งพัสดุ\",\n      'dispatchedAt': new Date().toISOString()\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4580,
+        -1140
+      ],
+      "id": "6194b956-1b3e-4453-b486-90bc66c665c4",
+      "name": "update deliver status"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc",
+          "mode": "list",
+          "cachedResultName": "rider_express",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YvW9CJYcY_2qX6UEZjj0-rlhjWGqgYOd-ZdvRAKPwVc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "trackingId": "={{ $json.trackingId }}",
+            "senderName": "={{ $json.senderName }}",
+            "receiverName": "={{ $json.receiverName }}",
+            "status": "={{ $json.status }}",
+            "pickupRider": "={{ $json.pickupRider }}",
+            "receiverAddress": "={{ $json.receiverAddress }}",
+            "warehouseAt": "={{ $json.warehouseAt }}",
+            "deliveryRider": "={{ $json.deliveryRider }}",
+            "zone": "={{ $json.zone }}",
+            "sortedAt": "={{ $json.sortedAt }}",
+            "dispatchedAt": "={{ $json.dispatchedAt }}"
+          },
+          "matchingColumns": [
+            "trackingId"
+          ],
+          "schema": [
+            {
+              "id": "trackingId",
+              "displayName": "trackingId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverName",
+              "displayName": "receiverName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverAddress",
+              "displayName": "receiverAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pickupRider",
+              "displayName": "pickupRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zone",
+              "displayName": "zone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "deliveryRider",
+              "displayName": "deliveryRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "warehouseAt",
+              "displayName": "warehouseAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sortedAt",
+              "displayName": "sortedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dispatchedAt",
+              "displayName": "dispatchedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4360,
+        -1140
+      ],
+      "id": "3869deea-12dc-42ff-a0eb-5dcf7040d13e",
+      "name": "update parcels out for delivery",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pbyM5qkqErXWRnHb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4840,
+        -1140
+      ],
+      "id": "d2fcedca-f5d0-4c32-9262-74dd737d9e19",
+      "name": "Wait for rider load parcel 5s",
+      "webhookId": "d8ddc0d3-e8e6-47bb-8e67-6777f657a5b2"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "read all parcels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "update parcels arrived warehouse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "read all parcels": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for sorting 5s": {
+      "main": [
+        [
+          {
+            "node": "sort and assign to rider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sort and assign to rider": {
+      "main": [
+        [
+          {
+            "node": "update parcels sorted and assigned for delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update parcels arrived warehouse": {
+      "main": [
+        [
+          {
+            "node": "Wait for sorting 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update parcels sorted and assigned for delivery": {
+      "main": [
+        [
+          {
+            "node": "Wait for rider load parcel 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update deliver status": {
+      "main": [
+        [
+          {
+            "node": "update parcels out for delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for rider load parcel 5s": {
+      "main": [
+        [
+          {
+            "node": "update deliver status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2d85afe35485c37d052e878d05cf19d2cbaa790f80e9e263a992a8d5e911db3"
+  }
+}
