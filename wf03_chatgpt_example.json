@@ -1,0 +1,157 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3520,
+        20
+      ],
+      "id": "b4d93251-1387-4812-8d46-09e34f93205a",
+      "name": "When chat message received",
+      "webhookId": "22d40dd9-bab3-4737-bdcd-365328d24b93"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "คุณเป็นแชทที่สามารถเช็คข้อมูลการรับส่งพัสดุ และสามารถสรุปข้อมูลต่างๆได้\nเช่น pickupRider คือคนรับพัสดุ\ndeliveryRider คือคนส่งพัสดุ\nช่วยสรุปข้อูลสั้นๆ กระชับ"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -3300,
+        20
+      ],
+      "id": "28eda8fb-6908-4117-a207-de7e4d665955",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -3420,
+        280
+      ],
+      "id": "945136f7-96f3-4667-82ca-d8f579c73c59",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "DcYHz0RyfxCPm6mY",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -3220,
+        300
+      ],
+      "id": "a8200427-900a-4eed-b83c-13db7b904cd6",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YvW9CJYcY_2qX6UEZjj0-rlhjWGqgYOd-ZdvRAKPwVc",
+          "mode": "list",
+          "cachedResultName": "mini_thunder_express",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YvW9CJYcY_2qX6UEZjj0-rlhjWGqgYOd-ZdvRAKPwVc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YvW9CJYcY_2qX6UEZjj0-rlhjWGqgYOd-ZdvRAKPwVc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        -3000,
+        260
+      ],
+      "id": "5322e2e5-aedd-4d5c-9c37-099c5071cbf2",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "y2WGSp8Tmy91GGBo",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c4b4d7461ea994c934babf46e841b82a7d55a32f8c7e3b5ef42a4c109a0172ce"
+  }
+}
