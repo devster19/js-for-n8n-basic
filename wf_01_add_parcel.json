@@ -1,0 +1,301 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -5720,
+        -2240
+      ],
+      "id": "87470c5a-d83e-4fd0-a624-3d645f2aa16c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n    \"trackingId\": \"TX001\",\n    \"senderName\": \"อนุชา\",\n    \"receiverName\": \"คุณแอน\",\n    \"receiverAddress\": \"45 ซอย รามอินทรา 109 เขตมีนบุรี 10510 กรุงเทพ\",\n    \"pickupRider\": \"วิน\"\n  }\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5360,
+        -2440
+      ],
+      "id": "be801c7f-4398-42b8-ac31-246c08b776a4",
+      "name": "customer_1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc",
+          "mode": "list",
+          "cachedResultName": "rider_express",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AQ7T2A6zis15qxBCbgLcsWe_OQrsPqm7qTcqFTerdcc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "trackingId": "={{ $json.trackingId }}",
+            "senderName": "={{ $json.senderName }}",
+            "receiverName": "={{ $json.receiverName }}",
+            "receiverAddress": "={{ $json.receiverAddress }}",
+            "pickupRider": "={{ $json.pickupRider }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "trackingId",
+              "displayName": "trackingId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "senderName",
+              "displayName": "senderName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverName",
+              "displayName": "receiverName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "receiverAddress",
+              "displayName": "receiverAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pickupRider",
+              "displayName": "pickupRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "zone",
+              "displayName": "zone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "deliveryRider",
+              "displayName": "deliveryRider",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "warehouseAt",
+              "displayName": "warehouseAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sortedAt",
+              "displayName": "sortedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dispatchedAt",
+              "displayName": "dispatchedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "deliveredAt",
+              "displayName": "deliveredAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4720,
+        -2240
+      ],
+      "id": "ce52b4b4-338f-44e2-a943-11663114e516",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pbyM5qkqErXWRnHb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5080,
+        -2020
+      ],
+      "id": "3d2117ad-6a2f-40e5-8cc5-a093d6920348",
+      "name": "Wait 5s",
+      "webhookId": "2dd47006-d115-4851-8e66-8b78d77dfc09"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n    \"trackingId\": \"TX004\",\n    \"senderName\": \"ทศพร\",\n    \"receiverName\": \"คุณแน๊ต\",\n    \"receiverAddress\": \"59 หมู่ 4 อำเภอหาดใหญ่ จังหวัดสงขลา 90110\",\n    \"pickupRider\": \"ภูผา\"\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5360,
+        -2020
+      ],
+      "id": "b6b19e9f-8242-49bc-a39c-8b7151bf22d5",
+      "name": "customer_3"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n    \"trackingId\": \"TX003\",\n    \"senderName\": \"วรางคณา\",\n    \"receiverName\": \"คุณเปิ้ล\",\n    \"receiverAddress\": \"78 หมู่ 8 อำเภอเมือง จังหวัดเชียงใหม่ 50000\",\n    \"pickupRider\": \"พีท\"\n  }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5360,
+        -2240
+      ],
+      "id": "ab5c933d-9b7c-41cd-b2fc-978eb44a06be",
+      "name": "customer_2"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "customer_1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "customer_2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "customer_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer_1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5s": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer_3": {
+      "main": [
+        [
+          {
+            "node": "Wait 5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer_2": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2d85afe35485c37d052e878d05cf19d2cbaa790f80e9e263a992a8d5e911db3"
+  }
+}
